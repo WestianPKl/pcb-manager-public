@@ -1,0 +1,31 @@
+info:
+  name: Create Production Items
+  type: http
+  seq: 8
+
+http:
+  method: POST
+  url: "{{baseUrl}}/production/38360325-2c09-4f84-8448-d501c4ae0958/items"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  body:
+    type: json
+    data: |-
+      { 
+        "productionOrderId": "38360325-2c09-4f84-8448-d501c4ae0958", 
+        "inventoryId": "334b0f22-bd04-4ba0-8336-d8db36923ea7",
+        "qtyPerBoard": 2,
+        "requiredQtyTotal": 2,
+        "consumedQty": 2,
+        "allowSubstitute": false,
+        "designators": "R1",
+        "status": "ok"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,18 @@
+info:
+  name: Get  Admin Permission Users
+  type: http
+  seq: 18
+
+http:
+  method: GET
+  url: "{{baseUrl}}/admin/permissions/9ac1820a-6021-4d8d-b717-991f5ea5ddfd/users"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

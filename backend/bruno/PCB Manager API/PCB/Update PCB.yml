@@ -1,0 +1,21 @@
+info:
+  name: Update PCB
+  type: http
+  seq: 5
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/pcb/4bd8fb4d-df8a-4d11-853e-4b29c67e4ab3"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  body:
+    type: json
+    data: '{ "projectId": "72a4ad5a-1980-4fbe-859f-40d48e3990f8", "name": "Test PCB", "revision": "1A", "comment": "This is a test PCB", "verified": false }'
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

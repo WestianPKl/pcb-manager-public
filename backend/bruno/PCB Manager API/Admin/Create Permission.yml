@@ -1,0 +1,26 @@
+info:
+  name: Create Permission
+  type: http
+  seq: 12
+
+http:
+  method: POST
+  url: "{{baseUrl}}/admin/permissions"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  body:
+    type: json
+    data: |2-
+        {
+            "name": "test",
+            "functionalityId": "6b4f0d4f-4956-4af3-9096-b08bed5fb4a7",
+            "accessLevelId": 1
+        }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

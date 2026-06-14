@@ -1,0 +1,35 @@
+info:
+  name: Login
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseUrl}}/auth/login"
+  body:
+    type: json
+    data: |-
+      {
+        "email": "admin@admin.pl",
+        "password": "admin"
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const token = res.body.accessToken
+        bru.setEnvVar("accessToken", token)
+
+        const cookie = res.headers['set-cookie']
+        if (cookie) {
+          const refreshToken = cookie[0].split(';')[0].split('=')[1]
+          bru.setEnvVar("refreshToken", refreshToken)
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

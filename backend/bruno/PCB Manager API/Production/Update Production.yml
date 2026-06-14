@@ -1,0 +1,26 @@
+info:
+  name: Update Production
+  type: http
+  seq: 5
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/production/81cea710-dc34-4e7c-8751-3e410fe54946"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  body:
+    type: json
+    data: |-
+      { 
+        "pcbId": "03ddeca0-f134-4efd-a9cd-a6a4d3d8710a", 
+        "quantity": 2,
+        "status": "ready"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

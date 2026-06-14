@@ -1,0 +1,18 @@
+info:
+  name: Delete Functionality
+  type: http
+  seq: 8
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}/admin/functionalities/7e277431-9a4c-4ba0-a36c-1040b37777e4"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

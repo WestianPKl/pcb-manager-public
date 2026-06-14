@@ -1,0 +1,21 @@
+info:
+  name: Update Project
+  type: http
+  seq: 5
+
+http:
+  method: PUT
+  url: '{{baseUrl}}/projects/06f6f4bd-59a9-4bae-9bdf-4f5e357ac388'
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  body:
+    type: json
+    data: '{ "name": "Project 2", "description": "Description of Project 2"}'
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

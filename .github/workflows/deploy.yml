@@ -1,0 +1,82 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Frontend tests
+        working-directory: frontend
+        run: |
+          pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Backend tests
+        working-directory: backend
+        env:
+          NODE_ENV: test
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USER: test
+          DB_PASSWORD: test
+          DB_NAME: test
+          JWT_SECRET: test_secret_min_32_chars_long_string
+          JWT_ACCESS_EXPIRES: 15m
+          JWT_REFRESH_EXPIRES: 30d
+          MINIO_ENDPOINT: http://localhost:9000
+          MINIO_USER: minioadmin
+          MINIO_PASSWORD: minioadmin
+        run: |
+          pnpm install --frozen-lockfile
+          node_modules/.bin/drizzle-kit migrate --config=drizzle.config.ts
+          pnpm test:run
+
+  deploy:
+    name: Deploy
+    runs-on: self-hosted
+    needs: test
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy
+        run: |
+          cd ~/_repository/pcb-manager
+          git pull origin main
+          docker compose build --no-cache
+          docker compose up -d
+          sleep 10
+          docker compose exec -T backend node_modules/.bin/drizzle-kit migrate --config=drizzle.config.ts
+          docker image prune -f
+          echo "Deploy complete"

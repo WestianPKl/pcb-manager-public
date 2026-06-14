@@ -1,0 +1,21 @@
+info:
+  name: Create PCB
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{baseUrl}}/pcb"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  body:
+    type: json
+    data: '{ "projectId": "72a4ad5a-1980-4fbe-859f-40d48e3990f8", "name": "Test PCB", "revision": "1A", "comment": "This is a test PCB", "verified": false }'
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

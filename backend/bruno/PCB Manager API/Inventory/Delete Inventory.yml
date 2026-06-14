@@ -1,0 +1,18 @@
+info:
+  name: Delete Inventory
+  type: http
+  seq: 6
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}/inventory/70ffb0c2-33fe-4b47-ba9f-710a88a0a6e5"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

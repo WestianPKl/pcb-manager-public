@@ -1,0 +1,26 @@
+info:
+  name: Create Production
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{baseUrl}}/production"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  body:
+    type: json
+    data: |-
+      { 
+        "pcbId": "03ddeca0-f134-4efd-a9cd-a6a4d3d8710a", 
+        "quantity": 1,
+        "status": "planned"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

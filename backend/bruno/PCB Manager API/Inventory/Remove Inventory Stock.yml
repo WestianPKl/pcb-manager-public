@@ -1,0 +1,26 @@
+info:
+  name: Remove Inventory Stock
+  type: http
+  seq: 25
+
+http:
+  method: POST
+  url: "{{baseUrl}}/inventory/334b0f22-bd04-4ba0-8336-d8db36923ea7/stock/remove"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  body:
+    type: json
+    data: |-
+      {
+        "quantity": 10,
+        "reason": "correction",
+        "note": "Korekta inwentaryzacyjna"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

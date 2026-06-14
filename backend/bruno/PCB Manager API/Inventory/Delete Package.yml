@@ -1,0 +1,18 @@
+info:
+  name: Delete Package
+  type: http
+  seq: 14
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}/inventory/packages/d2025b50-6f12-4fcf-a51d-bf6ef46184c3"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

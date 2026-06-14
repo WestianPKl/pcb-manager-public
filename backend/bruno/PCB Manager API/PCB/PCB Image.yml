@@ -1,0 +1,31 @@
+info:
+  name: PCB Image
+  type: http
+  seq: 7
+
+http:
+  method: POST
+  url: "{{baseUrl}}/pcb/03ddeca0-f134-4efd-a9cd-a6a4d3d8710a/images"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  body:
+    type: multipart-form
+    data:
+      - name: top
+        type: file
+        value:
+          - C:\Users\Piotr\Desktop\Zrzut ekranu 2026-06-03 193313.png
+        contentType: image/png
+      - name: bottom
+        type: file
+        value:
+          - C:\Users\Piotr\Desktop\Zrzut ekranu 2026-06-03 193313.png
+        contentType: image/png
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

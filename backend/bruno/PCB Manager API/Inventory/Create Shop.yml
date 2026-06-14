@@ -1,0 +1,21 @@
+info:
+  name: Create Shop
+  type: http
+  seq: 20
+
+http:
+  method: POST
+  url: "{{baseUrl}}/inventory/shops"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  body:
+    type: json
+    data: '{ "name": "Allegro" }'
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

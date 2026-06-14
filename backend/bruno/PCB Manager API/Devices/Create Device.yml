@@ -1,0 +1,27 @@
+info:
+  name: Create Device
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{baseUrl}}/devices"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  body:
+    type: json
+    data: |-
+      { 
+        "name": "Device 1", 
+        "serialNumber": "ABC",
+        "description": "Description of Device 1",
+        "pcbId": "03ddeca0-f134-4efd-a9cd-a6a4d3d8710a"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

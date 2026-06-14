@@ -1,0 +1,18 @@
+info:
+  name: Delete PCB
+  type: http
+  seq: 6
+
+http:
+  method: DELETE
+  url: '{{baseUrl}}/pcb/4bd8fb4d-df8a-4d11-853e-4b29c67e4ab3'
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

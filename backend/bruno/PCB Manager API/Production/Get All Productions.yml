@@ -1,0 +1,25 @@
+info:
+  name: Get All Productions
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{baseUrl}}/production?page=1&limit=20"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  params:
+    - name: page
+      value: "1"
+      type: query
+    - name: limit
+      value: "20"
+      type: query
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,18 @@
+info:
+  name: Delete PCB BOM
+  type: http
+  seq: 11
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}/pcb/bom/2e1f39ea-27fe-4e87-9427-30b568afb285"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

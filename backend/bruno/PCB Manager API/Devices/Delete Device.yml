@@ -1,0 +1,18 @@
+info:
+  name: Delete Device
+  type: http
+  seq: 6
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}/devices/23bdbbdb-ad86-4b49-9bdc-3575dd41e0f9"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

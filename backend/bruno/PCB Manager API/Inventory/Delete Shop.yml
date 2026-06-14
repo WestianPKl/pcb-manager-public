@@ -1,0 +1,18 @@
+info:
+  name: Delete Shop
+  type: http
+  seq: 22
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}/inventory/shops/8b2edf29-e8f0-4280-8580-2ec564990fd6"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

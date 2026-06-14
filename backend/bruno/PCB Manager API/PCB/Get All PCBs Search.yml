@@ -1,0 +1,24 @@
+info:
+  name: Get All PCBs Search
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseUrl}}/pcb/search"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Test PCB"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

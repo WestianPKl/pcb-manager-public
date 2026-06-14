@@ -1,0 +1,18 @@
+info:
+  name: Delete Project
+  type: http
+  seq: 6
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}/projects/06f6f4bd-59a9-4bae-9bdf-4f5e357ac388"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

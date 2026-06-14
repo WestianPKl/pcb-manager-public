@@ -1,0 +1,18 @@
+info:
+  name: Regenerate Token
+  type: http
+  seq: 8
+
+http:
+  method: POST
+  url: "{{baseUrl}}/devices/226fe23e-f6e0-40d7-86e7-589b7ac4c79d/regenerate-claim"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

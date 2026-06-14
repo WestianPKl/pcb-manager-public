@@ -1,0 +1,24 @@
+info:
+  name: Get All Permissions Search
+  type: http
+  seq: 10
+
+http:
+  method: POST
+  url: "{{baseUrl}}/admin/permissions/search"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  body:
+    type: json
+    data: |-
+      {
+
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,21 @@
+info:
+  name: Create Inventory
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{baseUrl}}/inventory"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  body:
+    type: json
+    data: '{ "name": "Tranzystor BC-385A", "manufacturerNumber": "BC-385A", "parameters": { "type": "NPN", "voltage": "40V", "current": "0.1A" }, "comment": "Universal NPN transistor", "lowThreshold": 10, "inventoryTypeId": "5f261e35-62d2-458b-b3e4-342be0d49528", "inventorySurfaceMountId": "d05f857d-7627-4472-99e1-5524f0fe9c35", "inventoryPackageId": "30746acd-7425-4f33-aee1-aeee45492111", "inventoryShopId": "b913889d-620b-45b8-93a3-86bd45322d0f" }'
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

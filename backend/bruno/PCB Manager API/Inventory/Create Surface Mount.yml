@@ -1,0 +1,21 @@
+info:
+  name: Create Surface Mount
+  type: http
+  seq: 16
+
+http:
+  method: POST
+  url: "{{baseUrl}}/inventory/surface-mounts"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  body:
+    type: json
+    data: '{ "name": "SMD" }'
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

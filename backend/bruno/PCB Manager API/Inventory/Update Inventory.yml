@@ -1,0 +1,21 @@
+info:
+  name: Update Inventory
+  type: http
+  seq: 5
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/inventory/70ffb0c2-33fe-4b47-ba9f-710a88a0a6e5"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  body:
+    type: json
+    data: '{ "name": "Tranzystor BC-399", "manufacturerNumber": "BC-399", "parameters": { "type": "PNP", "voltage": "60V", "current": "0.5A" }, "comment": "Universal PNP transistor", "lowThreshold": 5, "inventoryTypeId": "7db08475-d67c-4f77-a8fc-b9f9d5145574", "inventorySurfaceMountId": "561d80dc-9aed-4d73-88a5-4dc6a6dfc231", "inventoryPackageId": "82a883ca-85ea-4189-8b64-485ab18df291", "inventoryShopId": "9302cff8-883c-40bf-b2db-63729bb2dcb3" }'
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

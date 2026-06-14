@@ -1,0 +1,18 @@
+info:
+  name: Delete Production Items
+  type: http
+  seq: 10
+
+http:
+  method: DELETE
+  url: "{{baseUrl}}/production/items/e9168c90-d8f4-42a7-80b6-e49b720559ce"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

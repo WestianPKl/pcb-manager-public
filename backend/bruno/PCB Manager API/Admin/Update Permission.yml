@@ -1,0 +1,26 @@
+info:
+  name: Update Permission
+  type: http
+  seq: 13
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/admin/permissions/3b68d710-3e9b-4ac4-8cfc-f9cbe9c1df11"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  body:
+    type: json
+    data: |2-
+        {
+            "name": "devices",
+            "functionalityId": "6b4f0d4f-4956-4af3-9096-b08bed5fb4a7",
+            "accessLevelId": 4
+        }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

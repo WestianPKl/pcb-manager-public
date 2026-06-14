@@ -1,0 +1,21 @@
+info:
+  name: Create Type
+  type: http
+  seq: 8
+
+http:
+  method: POST
+  url: "{{baseUrl}}/inventory/types"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  body:
+    type: json
+    data: '{ "name": "Dioda" }'
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

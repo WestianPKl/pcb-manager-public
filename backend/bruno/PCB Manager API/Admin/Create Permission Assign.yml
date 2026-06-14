@@ -1,0 +1,25 @@
+info:
+  name: Create Permission Assign
+  type: http
+  seq: 15
+
+http:
+  method: POST
+  url: "{{baseUrl}}/admin/permissions/assign"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  body:
+    type: json
+    data: |2-
+        {
+            "permissionId": "d498566e-e46b-48eb-984d-a09167f68cac",
+            "userId": "eb3c0848-9c96-4de1-ac30-3373a0c7861a"
+        }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

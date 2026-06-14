@@ -1,0 +1,18 @@
+info:
+  name: Claim Token
+  type: http
+  seq: 7
+
+http:
+  method: POST
+  url: "{{baseUrl}}/devices/claim/c1c75623-46a2-4e2d-953b-e9e089c6c895"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

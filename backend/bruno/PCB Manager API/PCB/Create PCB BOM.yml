@@ -1,0 +1,30 @@
+info:
+  name: Create PCB BOM
+  type: http
+  seq: 9
+
+http:
+  method: POST
+  url: "{{baseUrl}}/pcb/03ddeca0-f134-4efd-a9cd-a6a4d3d8710a/bom"
+  headers:
+    - name: Authorization
+      value: Bearer {{accessToken}}
+  body:
+    type: json
+    data: |-
+      { 
+        "pcbId": "03ddeca0-f134-4efd-a9cd-a6a4d3d8710a",
+        "inventoryId": "334b0f22-bd04-4ba0-8336-d8db36923ea7",
+        "qtyPerBoard": 1,
+        "designators": "R1",
+        "valueSpec": "10kR",
+        "allowSubstitute": false,
+        "comment": "This is a comment"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
