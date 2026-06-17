@@ -10,8 +10,7 @@ export const updateProductionOrderSchema = z.object({
 	status: z.enum(['planned', 'ready', 'reserved', 'in_assembly', 'produced', 'cancelled']).optional(),
 })
 
-export const searchProductionOrderSchema = z.object({
-	pcbId: z.string().uuid().optional(),
+export const searchProductionOrderSchema = createProductionOrderSchema.partial().extend({
 	status: z.enum(['planned', 'ready', 'reserved', 'in_assembly', 'produced', 'cancelled']).optional(),
 	page: z.coerce.number().int().min(1).default(1),
 	limit: z.coerce.number().int().min(1).max(100).default(20),

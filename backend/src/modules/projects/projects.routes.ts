@@ -1,7 +1,6 @@
 import { FastifyInstance } from 'fastify'
 import { projectsService } from './projects.service.js'
 import { createProjectSchema, updateProjectSchema, searchProjectSchema } from './projects.schema.js'
-import { paginationSchema } from '../../utils/schemas.js'
 import { permissionCheck } from '../../utils/permission-check.js'
 
 export default async function projectsRoutes(app: FastifyInstance) {
@@ -12,8 +11,8 @@ export default async function projectsRoutes(app: FastifyInstance) {
 		if (!hasPermission) {
 			return reply.status(403).send({ error: 'Forbidden' })
 		}
-		const { page, limit } = paginationSchema.parse(request.query)
-		return projectsService.getAll(page, limit)
+		const { page, limit, ...filters } = searchProjectSchema.parse(request.query)
+		return projectsService.getAll(page, limit, filters)
 	})
 
 	app.post('/search', auth, async (request, reply) => {
@@ -22,7 +21,7 @@ export default async function projectsRoutes(app: FastifyInstance) {
 			return reply.status(403).send({ error: 'Forbidden' })
 		}
 		const input = searchProjectSchema.parse(request.body)
-		return projectsService.search(input)
+		return projectsService.getAll(input.page, input.limit, input)
 	})
 
 	app.get('/:id', auth, async (request, reply) => {

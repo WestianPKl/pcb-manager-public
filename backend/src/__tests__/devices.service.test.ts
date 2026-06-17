@@ -212,10 +212,8 @@ describe('devicesService', () => {
 		it('should find items by name', async () => {
 			await devicesService.create(uniqueItem('search1', newPcbId), testUserId)
 
-			const result = await devicesService.search({
+			const result = await devicesService.getAll(1, 20, {
 				name: 'Device search1',
-				page: 1,
-				limit: 20,
 			})
 
 			expect(result.data.length).toBeGreaterThan(0)
@@ -223,10 +221,8 @@ describe('devicesService', () => {
 		})
 
 		it('should return empty for non-existent name', async () => {
-			const result = await devicesService.search({
+			const result = await devicesService.getAll(1, 20, {
 				name: 'NonExistentComponent12345',
-				page: 1,
-				limit: 20,
 			})
 
 			expect(result.data.length).toBe(0)

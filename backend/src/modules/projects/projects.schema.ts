@@ -7,8 +7,7 @@ export const createProjectSchema = z.object({
 
 export const updateProjectSchema = createProjectSchema.partial()
 
-export const searchProjectSchema = z.object({
-	name: z.string().optional(),
+export const searchProjectSchema = createProjectSchema.partial().extend({
 	page: z.coerce.number().int().min(1).default(1),
 	limit: z.coerce.number().int().min(1).max(100).default(20),
 })

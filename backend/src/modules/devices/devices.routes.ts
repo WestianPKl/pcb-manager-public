@@ -1,7 +1,6 @@
 import { FastifyInstance } from 'fastify'
 import { devicesService } from './devices.service.js'
 import { createDeviceSchema, updateDeviceSchema, searchDeviceSchema } from './devices.schema.js'
-import { paginationSchema } from '../../utils/schemas.js'
 import { permissionCheck } from '../../utils/permission-check.js'
 
 export default async function devicesRoutes(app: FastifyInstance) {
@@ -11,8 +10,8 @@ export default async function devicesRoutes(app: FastifyInstance) {
 		if (!hasPermission) {
 			return reply.status(403).send({ error: 'Forbidden' })
 		}
-		const { page, limit } = paginationSchema.parse(request.query)
-		return devicesService.getAll(page, limit)
+		const { page, limit, ...filters } = searchDeviceSchema.parse(request.query)
+		return devicesService.getAll(page, limit, filters)
 	})
 
 	app.post('/search', auth, async (request, reply) => {
@@ -21,7 +20,7 @@ export default async function devicesRoutes(app: FastifyInstance) {
 			return reply.status(403).send({ error: 'Forbidden' })
 		}
 		const input = searchDeviceSchema.parse(request.body)
-		return devicesService.search(input)
+		return devicesService.getAll(input.page, input.limit, input)
 	})
 
 	app.get('/:id', auth, async (request, reply) => {

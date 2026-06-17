@@ -139,23 +139,23 @@ describe('pcbService', () => {
 
 	describe('search', () => {
 		it('should find PCB by name', async () => {
-			const result = await pcbService.search({ name: 'PCB Test Board', page: 1, limit: 20 })
+			const result = await pcbService.getAll(1, 20, { name: 'PCB Test Board' })
 			expect(result.data.some(p => p.id === testPcbId)).toBe(true)
 		})
 
 		it('should find PCBs by projectId', async () => {
-			const result = await pcbService.search({ projectId: testProjectId, page: 1, limit: 20 })
+			const result = await pcbService.getAll(1, 20, { projectId: testProjectId })
 			expect(result.data.some(p => p.id === testPcbId)).toBe(true)
 		})
 
 		it('should return empty for non-existent name', async () => {
-			const result = await pcbService.search({ name: 'NonExistentPCBBoard12345', page: 1, limit: 20 })
+			const result = await pcbService.getAll(1, 20, { name: 'NonExistentPCBBoard12345' })
 			expect(result.data.length).toBe(0)
 			expect(result.pagination.total).toBe(0)
 		})
 
 		it('should filter by verified=false', async () => {
-			const result = await pcbService.search({ projectId: testProjectId, verified: false, page: 1, limit: 20 })
+			const result = await pcbService.getAll(1, 20, { projectId: testProjectId, verified: false })
 			expect(result.data.some(p => p.id === testPcbId)).toBe(true)
 			expect(result.data.every(p => p.verified === false)).toBe(true)
 		})

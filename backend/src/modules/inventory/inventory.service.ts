@@ -185,8 +185,26 @@ export const inventoryService = {
 		})
 	},
 
-	async getAll(page = 1, limit = 20) {
+	async getAll(page = 1, limit = 20, filters: Omit<SearchInventoryInput, 'page' | 'limit'> = {}) {
 		const offset = (page - 1) * limit
+
+		const conditions = []
+		if (filters.name) conditions.push(ilike(inventory.name, `%${filters.name}%`))
+		if (filters.manufacturerNumber)
+			conditions.push(ilike(inventory.manufacturerNumber, `%${filters.manufacturerNumber}%`))
+		if (filters.parameters) {
+			for (const [key, value] of Object.entries(filters.parameters)) {
+				conditions.push(sql`${inventory.parameters}->>${key} ilike ${'%' + value + '%'}`)
+			}
+		}
+		if (filters.lowThreshold !== undefined) conditions.push(eq(inventory.lowThreshold, filters.lowThreshold))
+		if (filters.inventoryTypeId) conditions.push(eq(inventory.inventoryTypeId, filters.inventoryTypeId))
+		if (filters.inventoryPackageId) conditions.push(eq(inventory.inventoryPackageId, filters.inventoryPackageId))
+		if (filters.inventorySurfaceMountId)
+			conditions.push(eq(inventory.inventorySurfaceMountId, filters.inventorySurfaceMountId))
+		if (filters.inventoryShopId) conditions.push(eq(inventory.inventoryShopId, filters.inventoryShopId))
+
+		const where = conditions.length > 0 ? and(...conditions) : undefined
 
 		const [data, countResult] = await Promise.all([
 			db
@@ -221,11 +239,12 @@ export const inventoryService = {
 				.leftJoin(inventoryShop, eq(inventoryShop.id, inventory.inventoryShopId))
 				.leftJoin(createdByUser, eq(createdByUser.id, inventory.createdById))
 				.leftJoin(updatedByUser, eq(updatedByUser.id, inventory.updatedById))
+				.where(where)
 				.orderBy(inventory.name)
 				.limit(limit)
 				.offset(offset),
 
-			db.select({ count: sql<number>`cast(count(*) as integer)` }).from(inventory),
+			db.select({ count: sql<number>`cast(count(*) as integer)` }).from(inventory).where(where),
 		])
 
 		return {
@@ -237,83 +256,6 @@ export const inventoryService = {
 				totalPages: Math.ceil(countResult[0].count / limit),
 				hasNext: page < Math.ceil(countResult[0].count / limit),
 				hasPrev: page > 1,
-			},
-		}
-	},
-
-	async search(input: SearchInventoryInput) {
-		const conditions = []
-		const offset = (input.page - 1) * input.limit
-
-		if (input.name) conditions.push(ilike(inventory.name, `%${input.name}%`))
-		if (input.manufacturerNumber) conditions.push(ilike(inventory.manufacturerNumber, `%${input.manufacturerNumber}%`))
-		if (input.parameters) {
-			for (const [key, value] of Object.entries(input.parameters)) {
-				conditions.push(sql`${inventory.parameters}->>${key} ilike ${'%' + value + '%'}`)
-			}
-		}
-		if (input.lowThreshold !== undefined) conditions.push(eq(inventory.lowThreshold, input.lowThreshold))
-		if (input.inventoryTypeId) conditions.push(eq(inventory.inventoryTypeId, input.inventoryTypeId))
-		if (input.inventoryPackageId) conditions.push(eq(inventory.inventoryPackageId, input.inventoryPackageId))
-		if (input.inventorySurfaceMountId)
-			conditions.push(eq(inventory.inventorySurfaceMountId, input.inventorySurfaceMountId))
-		if (input.inventoryShopId) conditions.push(eq(inventory.inventoryShopId, input.inventoryShopId))
-
-		const [data, countResult] = await Promise.all([
-			db
-				.select({
-					id: inventory.id,
-					name: inventory.name,
-					manufacturerNumber: inventory.manufacturerNumber,
-					parameters: inventory.parameters,
-					comment: inventory.comment,
-					lowThreshold: inventory.lowThreshold,
-					inventoryTypeId: inventory.inventoryTypeId,
-					inventorySurfaceMountId: inventory.inventorySurfaceMountId,
-					inventoryPackageId: inventory.inventoryPackageId,
-					inventoryShopId: inventory.inventoryShopId,
-					createdAt: inventory.createdAt,
-					updatedAt: inventory.updatedAt,
-					createdById: inventory.createdById,
-					updatedById: inventory.updatedById,
-					quantity: inventoryStock.quantity,
-					inventoryTypeName: inventoryType.name,
-					inventoryPackageName: inventoryPackage.name,
-					inventorySurfaceMountName: inventorySurfaceMount.name,
-					inventoryShopName: inventoryShop.name,
-					createdBy: createdByUser.name,
-					updatedBy: updatedByUser.name,
-				})
-				.from(inventory)
-				.leftJoin(inventoryStock, eq(inventoryStock.inventoryId, inventory.id))
-				.leftJoin(inventoryType, eq(inventoryType.id, inventory.inventoryTypeId))
-				.leftJoin(inventoryPackage, eq(inventoryPackage.id, inventory.inventoryPackageId))
-				.leftJoin(inventorySurfaceMount, eq(inventorySurfaceMount.id, inventory.inventorySurfaceMountId))
-				.leftJoin(inventoryShop, eq(inventoryShop.id, inventory.inventoryShopId))
-				.leftJoin(createdByUser, eq(createdByUser.id, inventory.createdById))
-				.leftJoin(updatedByUser, eq(updatedByUser.id, inventory.updatedById))
-				.where(conditions.length > 0 ? and(...conditions) : undefined)
-				.orderBy(inventory.name)
-				.limit(input.limit)
-				.offset(offset),
-
-			db
-				.select({ count: sql<number>`cast(count(*) as integer)` })
-				.from(inventory)
-				.where(conditions.length > 0 ? and(...conditions) : undefined),
-		])
-
-		const total = countResult[0].count
-
-		return {
-			data,
-			pagination: {
-				page: input.page,
-				limit: input.limit,
-				total,
-				totalPages: Math.ceil(total / input.limit),
-				hasNext: input.page < Math.ceil(total / input.limit),
-				hasPrev: input.page > 1,
 			},
 		}
 	},

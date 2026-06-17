@@ -16,59 +16,13 @@ const createdByUser = alias(users, 'created_by_user')
 const updatedByUser = alias(users, 'updated_by_user')
 
 export const pcbService = {
-	async getAll(page = 1, limit = 20) {
+	async getAll(page = 1, limit = 20, filters: Omit<SearchPcbInput, 'page' | 'limit'> = {}) {
 		const offset = (page - 1) * limit
 
-		const [data, countResult] = await Promise.all([
-			db
-				.select({
-					id: pcb.id,
-					projectId: pcb.projectId,
-					projectName: projects.name,
-					name: pcb.name,
-					revision: pcb.revision,
-					topUrl: pcb.topUrl,
-					bottomUrl: pcb.bottomUrl,
-					comment: pcb.comment,
-					verified: pcb.verified,
-					createdAt: pcb.createdAt,
-					updatedAt: pcb.updatedAt,
-					createdById: pcb.createdById,
-					updatedById: pcb.updatedById,
-					createdBy: createdByUser.name,
-					updatedBy: updatedByUser.name,
-				})
-				.from(pcb)
-				.leftJoin(projects, eq(projects.id, pcb.projectId))
-				.leftJoin(createdByUser, eq(createdByUser.id, pcb.createdById))
-				.leftJoin(updatedByUser, eq(updatedByUser.id, pcb.updatedById))
-				.orderBy(pcb.name)
-				.limit(limit)
-				.offset(offset),
-
-			db.select({ count: sql<number>`cast(count(*) as integer)` }).from(pcb),
-		])
-
-		return {
-			data,
-			pagination: {
-				page,
-				limit,
-				total: countResult[0].count,
-				totalPages: Math.ceil(countResult[0].count / limit),
-				hasNext: page < Math.ceil(countResult[0].count / limit),
-				hasPrev: page > 1,
-			},
-		}
-	},
-
-	async search(input: SearchPcbInput) {
 		const conditions = []
-		const offset = (input.page - 1) * input.limit
-
-		if (input.name) conditions.push(ilike(pcb.name, `%${input.name}%`))
-		if (input.projectId) conditions.push(eq(pcb.projectId, input.projectId))
-		if (input.verified !== undefined) conditions.push(eq(pcb.verified, input.verified))
+		if (filters.name) conditions.push(ilike(pcb.name, `%${filters.name}%`))
+		if (filters.projectId) conditions.push(eq(pcb.projectId, filters.projectId))
+		if (filters.verified !== undefined) conditions.push(eq(pcb.verified, filters.verified))
 
 		const where = conditions.length > 0 ? and(...conditions) : undefined
 
@@ -97,24 +51,21 @@ export const pcbService = {
 				.leftJoin(updatedByUser, eq(updatedByUser.id, pcb.updatedById))
 				.where(where)
 				.orderBy(pcb.name)
-				.limit(input.limit)
+				.limit(limit)
 				.offset(offset),
 
-			db
-				.select({ count: sql<number>`cast(count(*) as integer)` })
-				.from(pcb)
-				.where(where),
+			db.select({ count: sql<number>`cast(count(*) as integer)` }).from(pcb).where(where),
 		])
 
 		return {
 			data,
 			pagination: {
-				page: input.page,
-				limit: input.limit,
+				page,
+				limit,
 				total: countResult[0].count,
-				totalPages: Math.ceil(countResult[0].count / input.limit),
-				hasNext: input.page < Math.ceil(countResult[0].count / input.limit),
-				hasPrev: input.page > 1,
+				totalPages: Math.ceil(countResult[0].count / limit),
+				hasNext: page < Math.ceil(countResult[0].count / limit),
+				hasPrev: page > 1,
 			},
 		}
 	},

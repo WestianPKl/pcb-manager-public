@@ -12,10 +12,7 @@ export const createPcbSchema = z.object({
 
 export const updatePcbSchema = createPcbSchema.partial()
 
-export const searchPcbSchema = z.object({
-	name: z.string().optional(),
-	projectId: z.string().uuid().optional(),
-	verified: z.boolean().optional(),
+export const searchPcbSchema = createPcbSchema.partial().extend({
 	page: z.coerce.number().int().min(1).default(1),
 	limit: z.coerce.number().int().min(1).max(100).default(20),
 })

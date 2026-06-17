@@ -36,42 +36,12 @@ const orderSelect = {
 }
 
 export const productionService = {
-	async getAll(page = 1, limit = 20) {
+	async getAll(page = 1, limit = 20, filters: Omit<SearchProductionOrderInput, 'page' | 'limit'> = {}) {
 		const offset = (page - 1) * limit
 
-		const [data, countResult] = await Promise.all([
-			db
-				.select(orderSelect)
-				.from(productionOrders)
-				.leftJoin(pcb, eq(pcb.id, productionOrders.pcbId))
-				.leftJoin(createdByUser, eq(createdByUser.id, productionOrders.createdById))
-				.leftJoin(updatedByUser, eq(updatedByUser.id, productionOrders.updatedById))
-				.orderBy(productionOrders.createdAt)
-				.limit(limit)
-				.offset(offset),
-
-			db.select({ count: sql<number>`cast(count(*) as integer)` }).from(productionOrders),
-		])
-
-		return {
-			data,
-			pagination: {
-				page,
-				limit,
-				total: countResult[0].count,
-				totalPages: Math.ceil(countResult[0].count / limit),
-				hasNext: page < Math.ceil(countResult[0].count / limit),
-				hasPrev: page > 1,
-			},
-		}
-	},
-
-	async search(input: SearchProductionOrderInput) {
 		const conditions = []
-		const offset = (input.page - 1) * input.limit
-
-		if (input.pcbId) conditions.push(eq(productionOrders.pcbId, input.pcbId))
-		if (input.status) conditions.push(eq(productionOrders.status, input.status))
+		if (filters.pcbId) conditions.push(eq(productionOrders.pcbId, filters.pcbId))
+		if (filters.status) conditions.push(eq(productionOrders.status, filters.status))
 
 		const where = conditions.length > 0 ? and(...conditions) : undefined
 
@@ -84,24 +54,21 @@ export const productionService = {
 				.leftJoin(updatedByUser, eq(updatedByUser.id, productionOrders.updatedById))
 				.where(where)
 				.orderBy(productionOrders.createdAt)
-				.limit(input.limit)
+				.limit(limit)
 				.offset(offset),
 
-			db
-				.select({ count: sql<number>`cast(count(*) as integer)` })
-				.from(productionOrders)
-				.where(where),
+			db.select({ count: sql<number>`cast(count(*) as integer)` }).from(productionOrders).where(where),
 		])
 
 		return {
 			data,
 			pagination: {
-				page: input.page,
-				limit: input.limit,
+				page,
+				limit,
 				total: countResult[0].count,
-				totalPages: Math.ceil(countResult[0].count / input.limit),
-				hasNext: input.page < Math.ceil(countResult[0].count / input.limit),
-				hasPrev: input.page > 1,
+				totalPages: Math.ceil(countResult[0].count / limit),
+				hasNext: page < Math.ceil(countResult[0].count / limit),
+				hasPrev: page > 1,
 			},
 		}
 	},

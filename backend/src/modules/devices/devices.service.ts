@@ -40,46 +40,15 @@ const deviceSelect = {
 }
 
 export const devicesService = {
-	async getAll(page = 1, limit = 20) {
+	async getAll(page = 1, limit = 20, filters: Omit<SearchDeviceInput, 'page' | 'limit'> = {}) {
 		const offset = (page - 1) * limit
 
-		const [data, countResult] = await Promise.all([
-			db
-				.select(deviceSelect)
-				.from(devices)
-				.leftJoin(pcb, eq(pcb.id, devices.pcbId))
-				.leftJoin(createdByUser, eq(createdByUser.id, devices.createdById))
-				.leftJoin(updatedByUser, eq(updatedByUser.id, devices.updatedById))
-				.orderBy(devices.createdAt)
-				.limit(limit)
-				.offset(offset),
-
-			db.select({ count: sql<number>`cast(count(*) as integer)` }).from(devices),
-		])
-
-		return {
-			data,
-			pagination: {
-				page,
-				limit,
-				total: countResult[0].count,
-				totalPages: Math.ceil(countResult[0].count / limit),
-				hasNext: page < Math.ceil(countResult[0].count / limit),
-				hasPrev: page > 1,
-			},
-		}
-	},
-
-	async search(input: SearchDeviceInput) {
 		const conditions = []
-		const offset = (input.page - 1) * input.limit
-
-		if (input.name) conditions.push(ilike(devices.name, `%${input.name}%`))
-		if (input.pcbId) conditions.push(eq(devices.pcbId, input.pcbId))
-		if (input.serialNumber) conditions.push(ilike(devices.serialNumber, `%${input.serialNumber}%`))
-
-		if (input.claimed === true) conditions.push(isNotNull(devices.claimedAt))
-		if (input.claimed === false) conditions.push(isNull(devices.claimedAt))
+		if (filters.name) conditions.push(ilike(devices.name, `%${filters.name}%`))
+		if (filters.pcbId) conditions.push(eq(devices.pcbId, filters.pcbId))
+		if (filters.serialNumber) conditions.push(ilike(devices.serialNumber, `%${filters.serialNumber}%`))
+		if (filters.claimed === true) conditions.push(isNotNull(devices.claimedAt))
+		if (filters.claimed === false) conditions.push(isNull(devices.claimedAt))
 
 		const where = conditions.length > 0 ? and(...conditions) : undefined
 
@@ -92,24 +61,21 @@ export const devicesService = {
 				.leftJoin(updatedByUser, eq(updatedByUser.id, devices.updatedById))
 				.where(where)
 				.orderBy(devices.createdAt)
-				.limit(input.limit)
+				.limit(limit)
 				.offset(offset),
 
-			db
-				.select({ count: sql<number>`cast(count(*) as integer)` })
-				.from(devices)
-				.where(where),
+			db.select({ count: sql<number>`cast(count(*) as integer)` }).from(devices).where(where),
 		])
 
 		return {
 			data,
 			pagination: {
-				page: input.page,
-				limit: input.limit,
+				page,
+				limit,
 				total: countResult[0].count,
-				totalPages: Math.ceil(countResult[0].count / input.limit),
-				hasNext: input.page < Math.ceil(countResult[0].count / input.limit),
-				hasPrev: input.page > 1,
+				totalPages: Math.ceil(countResult[0].count / limit),
+				hasNext: page < Math.ceil(countResult[0].count / limit),
+				hasPrev: page > 1,
 			},
 		}
 	},

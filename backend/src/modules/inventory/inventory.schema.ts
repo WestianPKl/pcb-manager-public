@@ -20,15 +20,7 @@ export const createInventorySchema = z.object({
 
 export const updateInventorySchema = createInventorySchema.partial()
 
-export const searchInventorySchema = z.object({
-	name: z.string().optional(),
-	manufacturerNumber: z.string().optional(),
-	parameters: z.record(z.string(), z.any()).optional(),
-	lowThreshold: z.number().int().min(0).optional(),
-	inventoryTypeId: z.string().uuid().optional(),
-	inventoryPackageId: z.string().uuid().optional(),
-	inventorySurfaceMountId: z.string().uuid().optional(),
-	inventoryShopId: z.string().uuid().optional(),
+export const searchInventorySchema = createInventorySchema.partial().extend({
 	page: z.coerce.number().int().min(1).default(1),
 	limit: z.coerce.number().int().min(1).max(1000).default(20),
 })

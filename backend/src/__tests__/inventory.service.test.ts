@@ -351,10 +351,8 @@ describe('inventoryService', () => {
 		it('should find items by name', async () => {
 			await inventoryService.create(uniqueItem('search1'), testUserId)
 
-			const result = await inventoryService.search({
+			const result = await inventoryService.getAll(1, 20, {
 				name: 'Test Resistor search1',
-				page: 1,
-				limit: 20,
 			})
 
 			expect(result.data.length).toBeGreaterThan(0)
@@ -362,10 +360,8 @@ describe('inventoryService', () => {
 		})
 
 		it('should return empty for non-existent name', async () => {
-			const result = await inventoryService.search({
+			const result = await inventoryService.getAll(1, 20, {
 				name: 'NonExistentComponent12345',
-				page: 1,
-				limit: 20,
 			})
 
 			expect(result.data.length).toBe(0)

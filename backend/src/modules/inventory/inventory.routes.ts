@@ -8,7 +8,6 @@ import {
 	searchInventorySchema,
 } from './inventory.schema.js'
 import { addStockSchema, removeStockSchema, searchMovementsSchema } from './stock.schema.js'
-import { paginationSchema } from '../../utils/schemas.js'
 import { permissionCheck } from '../../utils/permission-check.js'
 
 export default async function inventoryRoutes(app: FastifyInstance) {
@@ -179,8 +178,8 @@ export default async function inventoryRoutes(app: FastifyInstance) {
 		if (!hasPermission) {
 			return reply.status(403).send({ error: 'Forbidden' })
 		}
-		const { page, limit } = paginationSchema.parse(request.query)
-		return inventoryService.getAll(page, limit)
+		const { page, limit, ...filters } = searchInventorySchema.parse(request.query)
+		return inventoryService.getAll(page, limit, filters)
 	})
 	app.post('/search', auth, async (request, reply) => {
 		const hasPermission = await permissionCheck(request, 'inventory', 'READ')
@@ -188,7 +187,7 @@ export default async function inventoryRoutes(app: FastifyInstance) {
 			return reply.status(403).send({ error: 'Forbidden' })
 		}
 		const input = searchInventorySchema.parse(request.body)
-		return inventoryService.search(input)
+		return inventoryService.getAll(input.page, input.limit, input)
 	})
 	app.get('/:id', auth, async (request, reply) => {
 		const hasPermission = await permissionCheck(request, 'inventory', 'READ')

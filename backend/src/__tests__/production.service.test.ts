@@ -189,17 +189,17 @@ describe('productionService', () => {
 
 	describe('search', () => {
 		it('should find orders by pcbId', async () => {
-			const result = await productionService.search({ pcbId: testPcbId, page: 1, limit: 20 })
+			const result = await productionService.getAll(1, 20, { pcbId: testPcbId })
 			expect(result.data.some(o => o.id === testOrderId)).toBe(true)
 		})
 
 		it('should find orders by status', async () => {
-			const result = await productionService.search({ status: 'ready', page: 1, limit: 20 })
+			const result = await productionService.getAll(1, 20, { status: 'ready' })
 			expect(result.data.some(o => o.id === testOrderId)).toBe(true)
 		})
 
 		it('should not return order for non-matching status', async () => {
-			const result = await productionService.search({ status: 'cancelled', pcbId: testPcbId, page: 1, limit: 20 })
+			const result = await productionService.getAll(1, 20, { status: 'cancelled', pcbId: testPcbId })
 			expect(result.data.some(o => o.id === testOrderId)).toBe(false)
 		})
 	})

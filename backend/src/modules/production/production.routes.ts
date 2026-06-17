@@ -7,7 +7,6 @@ import {
 	createOrderItemSchema,
 	updateOrderItemSchema,
 } from './production.schema.js'
-import { paginationSchema } from '../../utils/schemas.js'
 import { permissionCheck } from '../../utils/permission-check.js'
 
 export default async function productionRoutes(app: FastifyInstance) {
@@ -18,8 +17,8 @@ export default async function productionRoutes(app: FastifyInstance) {
 		if (!hasPermission) {
 			return reply.status(403).send({ error: 'Forbidden' })
 		}
-		const { page, limit } = paginationSchema.parse(request.query)
-		return productionService.getAll(page, limit)
+		const { page, limit, ...filters } = searchProductionOrderSchema.parse(request.query)
+		return productionService.getAll(page, limit, filters)
 	})
 
 	app.post('/search', auth, async (request, reply) => {
@@ -28,7 +27,7 @@ export default async function productionRoutes(app: FastifyInstance) {
 			return reply.status(403).send({ error: 'Forbidden' })
 		}
 		const input = searchProductionOrderSchema.parse(request.body)
-		return productionService.search(input)
+		return productionService.getAll(input.page, input.limit, input)
 	})
 
 	app.get('/:id', auth, async (request, reply) => {

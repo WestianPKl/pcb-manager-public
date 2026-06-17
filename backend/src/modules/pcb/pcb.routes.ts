@@ -7,7 +7,6 @@ import {
 	createBomItemSchema,
 	updateBomItemSchema,
 } from './pcb.schema.js'
-import { paginationSchema } from '../../utils/schemas.js'
 import { eq } from 'drizzle-orm'
 import { db } from '../../db/index'
 import { pcb } from '../../db/schema/pcb.js'
@@ -22,8 +21,8 @@ export default async function pcbRoutes(app: FastifyInstance) {
 		if (!hasPermission) {
 			return reply.status(403).send({ error: 'Forbidden' })
 		}
-		const { page, limit } = paginationSchema.parse(request.query)
-		return pcbService.getAll(page, limit)
+		const { page, limit, ...filters } = searchPcbSchema.parse(request.query)
+		return pcbService.getAll(page, limit, filters)
 	})
 
 	app.post('/search', auth, async (request, reply) => {
@@ -32,7 +31,7 @@ export default async function pcbRoutes(app: FastifyInstance) {
 			return reply.status(403).send({ error: 'Forbidden' })
 		}
 		const input = searchPcbSchema.parse(request.body)
-		return pcbService.search(input)
+		return pcbService.getAll(input.page, input.limit, input)
 	})
 
 	app.get('/:id', auth, async (request, reply) => {

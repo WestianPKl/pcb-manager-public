@@ -8,9 +8,7 @@ export const createDeviceSchema = z.object({
 
 export const updateDeviceSchema = createDeviceSchema.partial()
 
-export const searchDeviceSchema = z.object({
-	name: z.string().optional(),
-	pcbId: z.string().uuid().optional(),
+export const searchDeviceSchema = createDeviceSchema.partial().extend({
 	serialNumber: z.string().optional(),
 	claimed: z.boolean().optional(),
 	page: z.coerce.number().int().min(1).default(1),

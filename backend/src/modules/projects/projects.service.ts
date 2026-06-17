@@ -9,8 +9,13 @@ const createdByUser = alias(users, 'created_by_user')
 const updatedByUser = alias(users, 'updated_by_user')
 
 export const projectsService = {
-	async getAll(page = 1, limit = 20) {
+	async getAll(page = 1, limit = 20, filters: Omit<SearchProjectInput, 'page' | 'limit'> = {}) {
 		const offset = (page - 1) * limit
+
+		const conditions = []
+		if (filters.name) conditions.push(ilike(projects.name, `%${filters.name}%`))
+
+		const where = conditions.length > 0 ? and(...conditions) : undefined
 
 		const [data, countResult] = await Promise.all([
 			db
@@ -28,11 +33,12 @@ export const projectsService = {
 				.from(projects)
 				.leftJoin(createdByUser, eq(createdByUser.id, projects.createdById))
 				.leftJoin(updatedByUser, eq(updatedByUser.id, projects.updatedById))
+				.where(where)
 				.orderBy(projects.name)
 				.limit(limit)
 				.offset(offset),
 
-			db.select({ count: sql<number>`cast(count(*) as integer)` }).from(projects),
+			db.select({ count: sql<number>`cast(count(*) as integer)` }).from(projects).where(where),
 		])
 
 		return {
@@ -44,54 +50,6 @@ export const projectsService = {
 				totalPages: Math.ceil(countResult[0].count / limit),
 				hasNext: page < Math.ceil(countResult[0].count / limit),
 				hasPrev: page > 1,
-			},
-		}
-	},
-
-	async search(input: SearchProjectInput) {
-		const conditions = []
-		const offset = (input.page - 1) * input.limit
-
-		if (input.name) {
-			conditions.push(ilike(projects.name, `%${input.name}%`))
-		}
-
-		const [data, countResult] = await Promise.all([
-			db
-				.select({
-					id: projects.id,
-					name: projects.name,
-					description: projects.description,
-					createdById: projects.createdById,
-					updatedById: projects.updatedById,
-					createdAt: projects.createdAt,
-					updatedAt: projects.updatedAt,
-					createdBy: createdByUser.name,
-					updatedBy: updatedByUser.name,
-				})
-				.from(projects)
-				.leftJoin(createdByUser, eq(createdByUser.id, projects.createdById))
-				.leftJoin(updatedByUser, eq(updatedByUser.id, projects.updatedById))
-				.where(conditions.length > 0 ? and(...conditions) : undefined)
-				.orderBy(projects.name)
-				.limit(input.limit)
-				.offset(offset),
-
-			db
-				.select({ count: sql<number>`cast(count(*) as integer)` })
-				.from(projects)
-				.where(conditions.length > 0 ? and(...conditions) : undefined),
-		])
-
-		return {
-			data,
-			pagination: {
-				page: input.page,
-				limit: input.limit,
-				total: countResult[0].count,
-				totalPages: Math.ceil(countResult[0].count / input.limit),
-				hasNext: input.page < Math.ceil(countResult[0].count / input.limit),
-				hasPrev: input.page > 1,
 			},
 		}
 	},
