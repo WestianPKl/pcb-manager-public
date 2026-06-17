@@ -35,6 +35,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
+          cache: pnpm
+          cache-dependency-path: |
+            frontend/pnpm-lock.yaml
+            backend/pnpm-lock.yaml
 
       - name: Frontend tests
         working-directory: frontend
@@ -56,6 +60,7 @@ jobs:
           MINIO_ENDPOINT: http://localhost:9000
           MINIO_USER: minioadmin
           MINIO_PASSWORD: minioadmin
+          ADMIN_PASSWORD: test_admin_password
         run: |
           pnpm install --frozen-lockfile
           node_modules/.bin/drizzle-kit migrate --config=drizzle.config.ts

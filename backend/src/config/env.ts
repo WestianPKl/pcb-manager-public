@@ -25,11 +25,11 @@ const envSchema = z.object({
 	GMAIL_PASSWORD: z.string().optional(),
 	FRONTEND_URL: z.string().default('http://localhost:3001'),
 
-	ADMIN_USERNAME: z.string().length(8).default('adminadmin'),
-	ADMIN_EMAIL: z.string().email().default('admin@admin.com'),
-	ADMIN_NAME: z.string().default('Admin'),
-	ADMIN_SURNAME: z.string().default('User'),
-	ADMIN_PASSWORD: z.string().default('admin123'),
+	ADMIN_USERNAME: z.string().min(5),
+	ADMIN_EMAIL: z.string().email(),
+	ADMIN_NAME: z.string().min(1),
+	ADMIN_SURNAME: z.string().min(1),
+	ADMIN_PASSWORD: z.string().min(8),
 })
 
 const parsed = envSchema.safeParse(process.env)

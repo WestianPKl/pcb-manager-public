@@ -22,6 +22,7 @@ export default async function authRoutes(app: FastifyInstance) {
 	app.post(
 		'/register',
 		{
+			config: { rateLimit: { max: 5, timeWindow: '1 minute' } },
 			schema: {
 				tags: ['Auth'],
 				summary: 'Register new user',
@@ -74,7 +75,7 @@ export default async function authRoutes(app: FastifyInstance) {
 		},
 	)
 
-	app.post('/login', async (request, reply) => {
+	app.post('/login', { config: { rateLimit: { max: 5, timeWindow: '1 minute' } } }, async (request, reply) => {
 		const input = loginSchema.parse(request.body)
 
 		try {
@@ -306,7 +307,7 @@ export default async function authRoutes(app: FastifyInstance) {
 		}
 	})
 
-	app.post('/forgot-password', async (request, reply) => {
+	app.post('/forgot-password', { config: { rateLimit: { max: 5, timeWindow: '15 minutes' } } }, async (request, reply) => {
 		const { email } = request.body as { email: string }
 		if (!email) return reply.status(400).send({ error: 'Email is required' })
 
@@ -314,7 +315,7 @@ export default async function authRoutes(app: FastifyInstance) {
 		return reply.send({ message: 'If this email exists, a reset link has been sent' })
 	})
 
-	app.post('/reset-password', async (request, reply) => {
+	app.post('/reset-password', { config: { rateLimit: { max: 5, timeWindow: '15 minutes' } } }, async (request, reply) => {
 		const { token, password } = request.body as { token: string; password: string }
 		if (!token || !password) return reply.status(400).send({ error: 'Token and password are required' })
 

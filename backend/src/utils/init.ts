@@ -12,18 +12,12 @@ async function createAdminUser(): Promise<number> {
 		return 0
 	}
 
-	const adminUserName = env.ADMIN_USERNAME || 'adminadmin'
-	const adminEmail = env.ADMIN_EMAIL || 'admin@admin.com'
-	const adminName = env.ADMIN_NAME || 'Admin'
-	const adminSurname = env.ADMIN_SURNAME || 'User'
-	const adminPassword = env.ADMIN_PASSWORD || 'admin123'
-
 	const input = {
-		username: adminUserName,
-		email: adminEmail,
-		name: adminName,
-		surname: adminSurname,
-		password: adminPassword,
+		username: env.ADMIN_USERNAME,
+		email: env.ADMIN_EMAIL,
+		name: env.ADMIN_NAME,
+		surname: env.ADMIN_SURNAME,
+		password: env.ADMIN_PASSWORD,
 	}
 
 	const user = await authService.register(input)

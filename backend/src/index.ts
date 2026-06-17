@@ -3,6 +3,7 @@ import { ZodError } from 'zod'
 import { env } from './config/env'
 import corsPlugin from './plugins/cors'
 import helmetPlugin from './plugins/helmet'
+import rateLimitPlugin from './plugins/rate-limit'
 import jwtPlugin from './plugins/jwt'
 import dbPlugin from './plugins/db'
 import storagePlugin from './plugins/storage.js'
@@ -25,6 +26,7 @@ const app = Fastify({
 
 app.register(corsPlugin)
 app.register(helmetPlugin)
+app.register(rateLimitPlugin)
 app.register(jwtPlugin)
 app.register(dbPlugin)
 app.register(multipart, { limits: { fileSize: 10 * 1024 * 1024 } })
